@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import * as BooksAPI from "./BooksAPI";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 class BookShelfChanger extends React.Component {
   render() {
@@ -39,7 +40,7 @@ class BookShelfChanger extends React.Component {
 class Book extends React.Component {
   render() {
     const { books, book, handleChange } = this.props;
-    
+
     // Checks whether the book data is complete
     const smallThumbnail = book.imageLinks
       ? book.imageLinks.smallThumbnail
@@ -135,9 +136,13 @@ class OpenSearch extends React.Component {
   render() {
     return (
       <div className="open-search">
-        <button onClick={() => this.props.showSearchPage(true)}>
-          Add a book
-        </button>
+        <Link 
+          to="/search"
+        >
+          <button>
+            Add a book
+          </button>
+        </Link>
       </div>
     );
   }
@@ -174,17 +179,16 @@ class SearchBooks extends React.Component {
 
   render() {
     const { query, searchResults, error } = this.state;
-    console.log(searchResults)
 
     return (
       <div className="search-books">
         <div className="search-books-bar">
-          <button
+          <Link 
+            to="/"
             className="close-search"
-            onClick={() => this.props.showSearchPage(false)}
           >
             Close
-          </button>
+          </Link>
           <div className="search-books-input-wrapper">
             <input
               type="text"
@@ -218,7 +222,6 @@ class SearchBooks extends React.Component {
 
 class BooksApp extends React.Component {
   state = {
-    showSearchPage: false,
     books: [],
   };
 
@@ -256,21 +259,31 @@ class BooksApp extends React.Component {
 
   render() {
     return (
-      <div className="app">
-        {this.state.showSearchPage ? (
-          <SearchBooks
-            showSearchPage={this.showSearchPage}
-            books={this.state.books}
-            handleChange={this.handleChange}
+      <Router>
+        <div className="app">
+          <Route
+            path="/search"
+            render={() =>
+               (
+                <SearchBooks
+                  books={this.state.books}
+                  handleChange={this.handleChange}
+                />
+              )
+            }
           />
-        ) : (
-          <BooksShelfTable
-            books={this.state.books}
-            handleChange={this.handleChange}
-            showSearchPage={this.showSearchPage}
+          <Route
+            exact
+            path="/"
+            render={() => (
+              <BooksShelfTable
+                books={this.state.books}
+                handleChange={this.handleChange}
+              />
+            )}
           />
-        )}
-      </div>
+        </div>
+      </Router>
     );
   }
 }
