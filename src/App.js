@@ -138,6 +138,7 @@ class OpenSearch extends React.Component {
 }
 
 class SearchBooks extends React.Component {
+  
   state = {
     query: "",
     searchResults: [],
@@ -145,21 +146,21 @@ class SearchBooks extends React.Component {
   };
 
   searchBooks = (query) => {
-  
-    try {
       this.setState(() => ({
         query: query,
       }));
-      BooksAPI.search(query).then((data) => {
-        this.setState({
-          searchResults: data,
-        });
-      });
-    } catch(error) {
+
+      // Call the search API and update state with an error message is nothing found
+      BooksAPI.search(query.trim()).then((data) => {
+        data.length > 0
+          ? this.setState({ searchResults: data, error: '' })
+          : this.setState({ error: 'Sorry we could not find what your were looking for' })
+      // Update state with an error message is the API returns an error
+      }).catch(error => {
         this.setState({
           error: "Sorry something went wrong, please try again",
         });
-      };
+      });
   };
 
   render() {
@@ -217,16 +218,14 @@ class BooksApp extends React.Component {
   // };
 
   handleChange = (updatedBook, shelf) => {
+
     BooksAPI.update(updatedBook, shelf).then((res) => {
       updatedBook.shelf = shelf;
-      console.log(updatedBook)
-      console.log(this.state)
       this.setState((prevState) => ({
         books: prevState.books
           .filter((book) => book.id !== updatedBook.id)
           .concat(updatedBook),
       }));
-      console.log(this.state)
     });
   };
 
