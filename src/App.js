@@ -4,13 +4,24 @@ import * as BooksAPI from "./BooksAPI";
 
 class BookShelfChanger extends React.Component {
   render() {
+
+    const { books, book } = this.props
+
+    // Callback function to find the index of the book in the books array
+    const index = (element) => element.id === book.id
+
+    let shelf = book.shelf 
+      ? book.shelf 
+      : books.findIndex(index) !== -1 ? books[books.findIndex(index)].shelf
+      : "none" 
+
     return (
       <div className="book-shelf-changer">
         <select
           onChange={(event) =>
-            this.props.handleChange(this.props.book, event.target.value)
+            this.props.handleChange(book, event.target.value)
           }
-          value={this.props.book.shelf}
+          value={shelf}
         >
           <option value="move" disabled>
             Move to...
@@ -41,6 +52,7 @@ class Book extends React.Component {
             }}
           />
           <BookShelfChanger
+            books={this.props.books}
             book={this.props.book}
             shelf={this.props.book.shelf}
             handleChange={this.props.handleChange}
@@ -64,7 +76,10 @@ class BookShelfRow extends React.Component {
               return (
                 book.shelf === this.props.shelfValue && (
                   <li key={book.id}>
-                    <Book book={book} handleChange={this.props.handleChange} />
+                    <Book 
+                      books={this.props.books}
+                      book={book} 
+                      handleChange={this.props.handleChange} />
                   </li>
                 )
               );
@@ -126,24 +141,29 @@ class SearchBooks extends React.Component {
   state = {
     query: "",
     searchResults: [],
+    error: "",
   };
 
   searchBooks = (query) => {
-    
-    this.setState(() => ({
-      query: query.trim(),
-    }));
-    
-    BooksAPI.search(query).then((data) => {
-      this.setState({
-        searchResults: data,
+  
+    try {
+      this.setState(() => ({
+        query: query,
+      }));
+      BooksAPI.search(query).then((data) => {
+        this.setState({
+          searchResults: data,
+        });
       });
-    });
+    } catch(error) {
+        this.setState({
+          error: "Sorry something went wrong, please try again",
+        });
+      };
   };
 
   render() {
-    const { query, searchResults } = this.state;
-    console.log(searchResults);
+    const { query, searchResults, error } = this.state;
 
     return (
       <div className="search-books">
@@ -165,11 +185,17 @@ class SearchBooks extends React.Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {searchResults.map((book) => (
+            {!error 
+            ? searchResults.map((book) => (
               <li key={book.id}>
-                <Book book={book} handleChange={this.props.handleChange} />
+                <Book 
+                  books={this.props.books}
+                  book={book} 
+                  handleChange={this.props.handleChange} />
               </li>
-            ))}
+            ))
+            :<h1>{error}</h1>
+          }
           </ol>
         </div>
       </div>
@@ -193,11 +219,14 @@ class BooksApp extends React.Component {
   handleChange = (updatedBook, shelf) => {
     BooksAPI.update(updatedBook, shelf).then((res) => {
       updatedBook.shelf = shelf;
+      console.log(updatedBook)
+      console.log(this.state)
       this.setState((prevState) => ({
         books: prevState.books
           .filter((book) => book.id !== updatedBook.id)
           .concat(updatedBook),
       }));
+      console.log(this.state)
     });
   };
 
