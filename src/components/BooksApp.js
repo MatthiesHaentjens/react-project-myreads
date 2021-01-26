@@ -3,7 +3,7 @@ import "../App.css";
 import * as BooksAPI from "../BooksAPI";
 import SearchBooks from './SearchBooks';
 import BooksShelfTable from './BookShelfTable';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 class BooksApp extends React.Component {
   state = {
@@ -29,7 +29,6 @@ class BooksApp extends React.Component {
 
   render() {
     return (
-      <Router>
         <div className="app">
           <Route
             path="/search"
@@ -53,7 +52,6 @@ class BooksApp extends React.Component {
             )}
           />
         </div>
-      </Router>
     );
   }
 }
