@@ -3,8 +3,15 @@ import "../App.css";
 import * as BooksAPI from "../BooksAPI";
 import Book from './Book';
 import { Link } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 class SearchBooks extends React.Component {
+
+  static propTypes = {
+    books: PropTypes.array,
+    handleChange: PropTypes.func
+  }
+
   state = {
     query: "",
     searchResults: [],

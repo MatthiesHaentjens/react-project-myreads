@@ -2,8 +2,15 @@ import React from "react";
 import "../App.css";
 import BookShelfRow from './BookShelfRow';
 import OpenSearch from './OpenSearch';
+import PropTypes from 'prop-types';
 
 class BooksShelfTable extends React.Component {
+
+  static propTypes = {
+      books: PropTypes.array,
+      handleChange: PropTypes.func
+  }
+
   render() {
     const shelves = [
       { name: "Currently Reading", value: "currentlyReading" },

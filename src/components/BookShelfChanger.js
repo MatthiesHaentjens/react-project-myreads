@@ -1,7 +1,14 @@
 import React from "react";
 import "../App.css";
+import PropTypes from 'prop-types';
 
 class BookShelfChanger extends React.Component {
+  
+  static propTypes = {
+    books: PropTypes.array,
+    book: PropTypes.object
+  }
+
   render() {
     const { books, book } = this.props;
 

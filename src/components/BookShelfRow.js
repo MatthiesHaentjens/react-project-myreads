@@ -1,8 +1,17 @@
 import React from "react";
 import "../App.css";
 import Book from './Book';
+import PropTypes from 'prop-types';
 
 class BookShelfRow extends React.Component {
+
+  static propTypes = {
+    books: PropTypes.array,
+    shelf: PropTypes.string,
+    shelfValue: PropTypes.string,
+    handleChange: PropTypes.func
+  }
+
   render() {
     return (
       <div className="bookshelf">
