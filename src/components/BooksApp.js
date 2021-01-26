@@ -10,6 +10,14 @@ class BooksApp extends React.Component {
     books: [],
   };
 
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+      this.setState({
+          books: books
+      });
+    }).catch(error => console.log(error));
+  };
+
   handleChange = (updatedBook, shelf) => {
     BooksAPI.update(updatedBook, shelf).then((res) => {
       updatedBook.shelf = shelf;
@@ -21,18 +29,13 @@ class BooksApp extends React.Component {
     }).catch(error => console.log(error));
   };
 
-  showSearchPage = (value) => {
-    this.setState(() => ({
-      showSearchPage: value,
-    }));
-  };
-
   render() {
     return (
         <div className="app">
           <Route
+            exact
             path="/search"
-            render={() =>
+            render={( ) =>
                (
                 <SearchBooks
                   books={this.state.books}
